@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#080C14"/>
+  <rect width="512" height="512" rx="100" fill="url(#g)"/>
+  <defs>
+    <radialGradient id="g" cx="30%" cy="30%">
+      <stop offset="0%" stop-color="#1a2340"/>
+      <stop offset="100%" stop-color="#080C14"/>
+    </radialGradient>
+  </defs>
+  <text x="256" y="300" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="180" fill="#F5A623">XAU</text>
+  <circle cx="256" cy="140" r="28" fill="#F5A623" opacity=".9"/>
+  <circle cx="256" cy="140" r="28" fill="#F5A623" opacity=".4">
+    <animate attributeName="r" values="28;42;28" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".4;0;.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

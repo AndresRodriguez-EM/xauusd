@@ -1,0 +1,18 @@
+{
+  "name": "XAUUSD Trading Journal",
+  "short_name": "XAUUSD",
+  "description": "Registro diario de operativas en XAUUSD",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080C14",
+  "theme_color": "#F5A623",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
