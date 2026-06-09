@@ -1,8 +1,8 @@
 {
   "name": "XAUUSD Trading Journal",
   "short_name": "XAUUSD",
-  "start_url": "/Trading-Journal/",
-  "scope": "/Trading-Journal/",
+  "start_url": "/xauusd/",
+  "scope": "/xauusd/",
   "display": "standalone",
   "background_color": "#080C14",
   "theme_color": "#F5A623",
