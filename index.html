@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -16,12 +16,12 @@
   --bg:#080C14;--surface:#0D1421;--card:#111827;--border:#1F2D42;
   --gold:#F5A623;--gold2:#FFCC60;--green:#22C55E;--green-dim:#14532D;
   --red:#EF4444;--red-dim:#450A0A;--slate:#64748B;--muted:#94A3B8;
-  --text:#E2E8F0;--white:#F8FAFC;
+  --text:#E2E8F0;--white:#F8FAFC;--blue:#818CF8;
   --radius:14px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif}
-#root{height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+#root{height:100dvh;display:flex;flex-direction:column;max-width:460px;margin:0 auto;position:relative;overflow:hidden}
 
 /* ── HEADER ── */
 .hdr{
@@ -41,7 +41,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 
 /* ── TABS ── */
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{flex:1;padding:11px 0;background:transparent;border:none;color:var(--slate);font-size:12px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:1px;border-bottom:2px solid transparent;transition:all .2s}
+.tab{flex:1;padding:11px 0;background:transparent;border:none;color:var(--slate);font-size:11px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;border-bottom:2px solid transparent;transition:all .2s}
 .tab.on{color:var(--gold);border-bottom:2px solid var(--gold)}
 
 /* ── SCROLL AREA ── */
@@ -78,20 +78,23 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .day-cell.today{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .day-cell.win{background:var(--green-dim);border-color:#166534}
 .day-cell.loss{background:var(--red-dim);border-color:#7F1D1D}
+.day-cell.be{background:#1E293B;border-color:#334155}
 .day-num{font-size:11px;font-weight:700;color:var(--muted);font-family:'JetBrains Mono',monospace}
 .day-pnl{font-size:8px;font-weight:600;margin-top:1px;font-family:'JetBrains Mono',monospace}
 .day-add{font-size:15px;color:var(--border);margin-top:-1px}
 .day-cell.today .day-num{color:var(--gold)}
+.day-badge{position:absolute;top:2px;right:3px;font-size:7px;font-weight:700;color:var(--gold);font-family:'JetBrains Mono',monospace;background:rgba(245,166,35,.15);border-radius:6px;padding:0 3px}
 
 /* ── STATS VIEW ── */
 .stats-wrap{padding:14px}
-.stats-section{font-size:10px;letter-spacing:2px;color:var(--slate);margin-bottom:8px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stats-section{font-size:10px;letter-spacing:2px;color:var(--slate);margin:14px 0 8px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.stats-section:first-child{margin-top:0}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 6px;text-align:center}
 .stat-icon{font-size:16px;margin-bottom:4px}
 .stat-val{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace}
 .stat-lbl{font-size:9px;color:var(--slate);margin-top:2px;letter-spacing:.5px}
-.chart-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.chart-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:6px}
 .chart-lbl{font-size:10px;letter-spacing:2px;color:var(--slate);margin-bottom:10px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
 .bars{display:flex;align-items:flex-end;gap:2px;height:64px}
 .bar-w{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
@@ -104,21 +107,68 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .trade-n{flex:1;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .trade-p{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
 .empty-list{text-align:center;color:var(--border);padding:28px;font-size:12px;letter-spacing:1px}
+/* session table */
+.sess-tbl{display:flex;flex-direction:column;gap:6px}
+.sess-row{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;gap:8px}
+.sess-name{flex:1;font-size:12px;font-weight:700;color:var(--text)}
+.sess-metric{text-align:center;min-width:50px}
+.sess-mv{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.sess-ml{font-size:7px;color:var(--slate);letter-spacing:.5px;text-transform:uppercase}
+/* goal bar */
+.goal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:6px}
+.goal-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.goal-t{font-size:11px;color:var(--muted);font-weight:600}
+.goal-v{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.goal-track{height:9px;background:var(--surface);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.goal-fill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.34,1.4,.64,1)}
+.warn{background:var(--red-dim);border:1px solid #7F1D1D;border-radius:var(--radius-sm);padding:10px 12px;font-size:11px;color:#FCA5A5;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+/* equity svg */
+.eq-svg{width:100%;height:120px;display:block}
+
+/* ── SETTINGS ── */
+.set-wrap{padding:14px}
+.set-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.set-card h3{font-size:12px;color:var(--white);font-weight:800;margin-bottom:4px;letter-spacing:.5px}
+.set-card p{font-size:10px;color:var(--slate);line-height:1.5;margin-bottom:10px}
+.set-field{margin-bottom:10px}
+.set-lbl{font-size:9px;letter-spacing:1.5px;color:var(--slate);margin-bottom:5px;display:block;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.set-inp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--white);font-size:15px;padding:11px 12px;font-weight:700;font-family:'JetBrains Mono',monospace;outline:none}
+.set-btn{width:100%;padding:12px 0;border-radius:var(--radius-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;border:1px solid var(--border);background:var(--surface);color:var(--text);margin-top:2px;transition:transform .12s}
+.set-btn:active{transform:scale(.98)}
+.set-btn.gold{background:var(--gold);color:#080C14;border:none}
+.set-btn.danger{background:var(--red-dim);color:var(--red);border-color:#7F1D1D}
+.set-btn-row{display:flex;gap:8px}
+.set-btn-row .set-btn{flex:1}
+.set-info{font-size:9px;color:var(--slate);text-align:center;padding:6px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
 
 /* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;z-index:200;backdrop-filter:blur(4px)}
 .modal{
-  width:100%;max-width:430px;margin:0 auto;
-  background:var(--surface);border-radius:24px 24px 0 0;padding:0 20px 36px;
+  width:100%;max-width:460px;margin:0 auto;
+  background:var(--surface);border-radius:24px 24px 0 0;padding:0 20px 30px;
   border:1px solid var(--border);border-bottom:none;
   animation:slideUp .25s cubic-bezier(.34,1.56,.64,1);
+  max-height:92dvh;overflow-y:auto;
 }
+.modal::-webkit-scrollbar{display:none}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 18px}
-.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 16px}
+.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .modal-title{font-size:16px;font-weight:800;color:var(--white)}
 .modal-close{width:30px;height:30px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
-.type-row{display:flex;gap:8px;margin-bottom:16px}
+/* day trade list inside modal */
+.mday-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.mday-item{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;cursor:pointer}
+.mday-item.sel{border-color:var(--gold)}
+.mday-tag{font-size:8px;font-weight:700;padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+.tag-lon{background:rgba(129,140,248,.15);color:var(--blue)}
+.tag-ny{background:rgba(245,166,35,.15);color:var(--gold)}
+.tag-none{background:var(--border);color:var(--muted)}
+.mday-dir{font-size:10px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mday-p{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.mday-del{width:24px;height:24px;background:transparent;border:none;color:var(--slate);font-size:13px;cursor:pointer}
+.form-title{font-size:10px;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.type-row{display:flex;gap:8px;margin-bottom:12px}
 .type-btn{
   flex:1;padding:11px 0;background:var(--card);border:1px solid var(--border);
   border-radius:var(--radius-sm);color:var(--slate);font-size:12px;font-weight:700;
@@ -126,16 +176,25 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 }
 .type-btn.win-on{background:#052E16;border-color:#166534;color:var(--green)}
 .type-btn.loss-on{background:var(--red-dim);border-color:#7F1D1D;color:var(--red)}
-.field{margin-bottom:14px}
+.field{margin-bottom:12px}
+.field-row{display:flex;gap:8px}
+.field-row .field{flex:1}
 .field-lbl{font-size:9px;letter-spacing:2px;color:var(--slate);margin-bottom:6px;display:block;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
 .field-wrap{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
 .field-pre{padding:0 12px;color:var(--slate);font-size:16px;font-family:'JetBrains Mono',monospace}
 .field-inp{
   flex:1;background:transparent;border:none;outline:none;color:var(--white);
-  font-size:20px;padding:13px 12px 13px 0;font-weight:700;
-  font-family:'JetBrains Mono',monospace;
+  font-size:19px;padding:12px 12px 12px 0;font-weight:700;
+  font-family:'JetBrains Mono',monospace;min-width:0;
 }
 .field-inp::placeholder{color:var(--border)}
+.seg{display:flex;gap:6px}
+.seg-btn{flex:1;padding:10px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--slate);font-size:11px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s}
+.seg-btn.on{background:var(--surface);border-color:var(--gold);color:var(--gold)}
+.chk-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 12px;margin-bottom:12px;cursor:pointer}
+.chk-box{width:22px;height:22px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .15s}
+.chk-box.on{background:var(--green);border-color:var(--green);color:#052E16}
+.chk-lbl{font-size:12px;color:var(--text);font-weight:600}
 .field-txt{
   width:100%;background:var(--card);border:1px solid var(--border);
   border-radius:var(--radius-sm);color:var(--text);font-size:13px;
@@ -143,38 +202,58 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
   line-height:1.5;
 }
 .field-txt::placeholder{color:var(--border)}
-.modal-actions{display:flex;gap:8px;margin-top:6px}
-.btn-del{
-  flex:1;padding:14px 0;background:var(--red-dim);border:1px solid #7F1D1D;
-  border-radius:var(--radius);color:var(--red);font-size:13px;font-weight:700;
-  cursor:pointer;font-family:'Syne',sans-serif;
-}
+.modal-actions{display:flex;gap:8px;margin-top:4px}
 .btn-save{
-  flex:2;padding:14px 0;background:var(--gold);border:none;
+  flex:1;padding:14px 0;background:var(--gold);border:none;
   border-radius:var(--radius);color:#080C14;font-size:15px;font-weight:800;
   cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;
   box-shadow:0 4px 20px rgba(245,166,35,.35);transition:transform .12s,box-shadow .12s;
 }
 .btn-save:active{transform:scale(.97);box-shadow:0 2px 10px rgba(245,166,35,.2)}
+.hidden-file{display:none}
 </style>
 </head>
 <body>
 <div id="root"></div>
+<input type="file" id="import-file" class="hidden-file" accept="application/json" onchange="onImportFile(event)"/>
 <script>
-// ── State ────────────────────────────────────────────────────────────────
-const SK = "xauusd26";
+// ── Storage keys ───────────────────────────────────────────────────────────
+const SK  = "xauusd26";       // datos de operativas (se conserva para no perder tu historial)
+const CFG = "xauusd_cfg";     // configuración (meta, límites, cuenta)
+
+// ── Migración: modelo antiguo (1 operativa/día) -> nuevo (varias/día) ───────
+// Antiguo: trades[fecha] = {pnl, note, date}
+// Nuevo:   trades[fecha] = {items:[{id,pnl,r,dir,session,followed,note}], date}
+function migrate(raw){
+  const out = {};
+  for(const k in raw){
+    const v = raw[k];
+    if(!v) continue;
+    if(Array.isArray(v.items)){ out[k] = v; continue; }
+    if(typeof v.pnl === "number"){
+      out[k] = { date:k, items:[{ id:uid(), pnl:v.pnl, r:null, dir:null, session:null, followed:null, note:v.note||"" }] };
+    }
+  }
+  return out;
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+// ── State ───────────────────────────────────────────────────────────────────
 const today = new Date();
 let S = {
-  year: 2026, month: today.getMonth(),
-  view: "cal", modal: null,
-  form: { pnl:"", note:"", type:"win" },
-  trades: (()=>{ try{ return JSON.parse(localStorage.getItem(SK)||"{}") }catch{return{}} })()
+  year: today.getFullYear(), month: today.getMonth(),
+  view: "cal", modal: null, editIdx: null,
+  form: { pnl:"", note:"", type:"win", dir:"", session:"", r:"", followed:true },
+  trades: (()=>{ try{ return migrate(JSON.parse(localStorage.getItem(SK)||"{}")) }catch{ return {} } })(),
+  cfg: (()=>{ try{ return Object.assign({goal:0,maxLoss:0,account:0}, JSON.parse(localStorage.getItem(CFG)||"{}")) }catch{ return {goal:0,maxLoss:0,account:0} } })()
 };
-const save = () => localStorage.setItem(SK, JSON.stringify(S.trades));
+const save    = () => localStorage.setItem(SK, JSON.stringify(S.trades));
+const saveCfg = () => localStorage.setItem(CFG, JSON.stringify(S.cfg));
 
 // ── Constants ─────────────────────────────────────────────────────────────
 const MES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 const DIAS = ["D","L","M","X","J","V","S"];
+const DIASL = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 const dk = (y,m,d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
@@ -190,33 +269,62 @@ const compact = n => {
   if(a>=1000) return (n>0?"+":"-")+"$"+(a/1000).toFixed(1)+"k";
   return (n>0?"+":"-")+"$"+a.toFixed(0);
 };
+const dayItems = (y,m,d) => { const t=S.trades[dk(y,m,d)]; return t&&t.items?t.items:[]; };
+const dayPnl   = (y,m,d) => dayItems(y,m,d).reduce((s,i)=>s+i.pnl,0);
 
-// ── Stats ─────────────────────────────────────────────────────────────────
+// ── Stats del mes ───────────────────────────────────────────────────────────
 function monthStats(){
-  const {year,month,trades}=S;
+  const {year,month}=S;
   const days=dim(year,month);
-  const arr=[];
-  for(let d=1;d<=days;d++){const t=trades[dk(year,month,d)];if(t)arr.push(t);}
-  const pnl=arr.reduce((s,t)=>s+t.pnl,0);
-  const wins=arr.filter(t=>t.pnl>0).length;
-  const loss=arr.filter(t=>t.pnl<0).length;
-  return{arr,pnl,wins,loss,wr:arr.length?Math.round(wins/arr.length*100):0,
-    best:arr.length?Math.max(...arr.map(t=>t.pnl)):0,
-    worst:arr.length?Math.min(...arr.map(t=>t.pnl)):0};
+  const flat=[];                       // operativas en orden cronológico
+  for(let d=1;d<=days;d++){
+    const wd=new Date(year,month,d).getDay();
+    for(const it of dayItems(year,month,d)) flat.push({...it, day:d, wd});
+  }
+  const pnl=flat.reduce((s,t)=>s+t.pnl,0);
+  const wins=flat.filter(t=>t.pnl>0).length;
+  const loss=flat.filter(t=>t.pnl<0).length;
+  const decided=wins+loss;
+  const grossW=flat.filter(t=>t.pnl>0).reduce((s,t)=>s+t.pnl,0);
+  const grossL=Math.abs(flat.filter(t=>t.pnl<0).reduce((s,t)=>s+t.pnl,0));
+  // rachas
+  let maxW=0,maxL=0,curW=0,curL=0;
+  for(const t of flat){
+    if(t.pnl>0){curW++;curL=0;maxW=Math.max(maxW,curW);}
+    else if(t.pnl<0){curL++;curW=0;maxL=Math.max(maxL,curL);}
+  }
+  // equity + drawdown
+  let eq=0,peak=0,maxDD=0; const curve=[0];
+  for(const t of flat){ eq+=t.pnl; peak=Math.max(peak,eq); maxDD=Math.max(maxDD,peak-eq); curve.push(eq); }
+  // por sesión
+  const bySess={LON:{n:0,w:0,pnl:0},NY:{n:0,w:0,pnl:0},none:{n:0,w:0,pnl:0}};
+  for(const t of flat){ const k=t.session||"none"; if(!bySess[k])bySess[k]={n:0,w:0,pnl:0}; bySess[k].n++; bySess[k].pnl+=t.pnl; if(t.pnl>0)bySess[k].w++; }
+  // adherencia al plan
+  const withFlag=flat.filter(t=>t.followed!==null&&t.followed!==undefined);
+  const followed=withFlag.filter(t=>t.followed).length;
+  // R
+  const withR=flat.filter(t=>typeof t.r==="number"&&!isNaN(t.r));
+  const sumR=withR.reduce((s,t)=>s+t.r,0);
+  return {
+    flat,pnl,wins,loss,trades:flat.length,
+    wr:decided?Math.round(wins/decided*100):0,
+    best:flat.length?Math.max(...flat.map(t=>t.pnl)):0,
+    worst:flat.length?Math.min(...flat.map(t=>t.pnl)):0,
+    avg:flat.length?pnl/flat.length:0,
+    pf:grossL>0?grossW/grossL:(grossW>0?Infinity:0),
+    maxW,maxL,maxDD,curve,bySess,
+    adherence:withFlag.length?Math.round(followed/withFlag.length*100):null,
+    sumR,avgR:withR.length?sumR/withR.length:null,hasR:withR.length>0
+  };
 }
-const allPnL = () => Object.values(S.trades).reduce((s,t)=>s+t.pnl,0);
+const allPnL = () => Object.values(S.trades).reduce((s,t)=>s+(t.items?t.items.reduce((a,i)=>a+i.pnl,0):0),0);
 
 // ── Render ────────────────────────────────────────────────────────────────
 function render(){
-  const {year,month,view,trades,modal,form}=S;
-  const st=monthStats();
+  const {year,month,view,modal}=S;
   const apnl=allPnL();
   const apnlColor=apnl>=0?"var(--green)":"var(--red)";
-  const pnlColor=st.pnl>=0?"var(--green)":"var(--red)";
-  const days=dim(year,month);
-  const first=fd(year,month);
 
-  // Header
   let html=`
   <div class="hdr">
     <div class="hdr-logo">
@@ -234,162 +342,284 @@ function render(){
   <div class="tabs">
     <button class="tab ${view==="cal"?"on":""}" onclick="setView('cal')">📅 CALENDARIO</button>
     <button class="tab ${view==="stats"?"on":""}" onclick="setView('stats')">📊 ESTADÍSTICAS</button>
+    <button class="tab ${view==="set"?"on":""}" onclick="setView('set')">⚙️ AJUSTES</button>
   </div>
   <div class="scroll" id="scroll">`;
 
-  if(view==="cal"){
-    html+=`
-    <div class="mnav">
-      <button class="mnav-btn" onclick="prevM()">‹</button>
-      <div class="mnav-center">
-        <div class="mnav-month">${MES[month]}</div>
-        <div class="mnav-year">${year}</div>
-      </div>
-      <button class="mnav-btn" onclick="nextM()">›</button>
-    </div>
-    <div class="strip">
-      <div class="strip-item">
-        <div class="strip-val" style="color:${pnlColor}">${usd(st.pnl)}</div>
-        <div class="strip-lbl">P&L Mes</div>
-      </div>
-      <div class="strip-item">
-        <div class="strip-val" style="color:var(--green)">${st.wins}</div>
-        <div class="strip-lbl">Wins</div>
-      </div>
-      <div class="strip-item">
-        <div class="strip-val" style="color:var(--red)">${st.loss}</div>
-        <div class="strip-lbl">Losses</div>
-      </div>
-      <div class="strip-item">
-        <div class="strip-val" style="color:#FBBF24">${st.wr}%</div>
-        <div class="strip-lbl">Win Rate</div>
-      </div>
-    </div>
-    <div class="cal-head">${DIAS.map(d=>`<div class="cal-dh">${d}</div>`).join("")}</div>
-    <div class="cal-grid">`;
-
-    for(let i=0;i<first;i++) html+=`<div class="day-cell empty"></div>`;
-    for(let d=1;d<=days;d++){
-      const key=dk(year,month,d);
-      const t=trades[key];
-      const isW=t&&t.pnl>0, isL=t&&t.pnl<0;
-      const isTod=d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
-      let cls="day-cell";
-      if(isTod) cls+=" today";
-      else if(isW) cls+=" win";
-      else if(isL) cls+=" loss";
-      html+=`<div class="${cls}" onclick="openModal(${d})">
-        <div class="day-num">${d}</div>
-        ${t?`<div class="day-pnl" style="color:${isW?"var(--green)":"var(--red)"}">${compact(t.pnl)}</div>`
-           :`<div class="day-add">+</div>`}
-      </div>`;
-    }
-    html+=`</div>`;
-  }
-
-  if(view==="stats"){
-    const maxA=st.arr.length?Math.max(...st.arr.map(t=>Math.abs(t.pnl)),1):1;
-    const bars=Array.from({length:days},(_,i)=>{
-      const t=trades[dk(year,month,i+1)];
-      const h=t?Math.max(4,Math.abs(t.pnl)/maxA*56):0;
-      const bg=!t?"transparent":t.pnl>0?"var(--green)":"var(--red)";
-      return `<div class="bar-w">
-        <div class="bar" style="height:${h}px;background:${bg};opacity:${h?1:0.15}"></div>
-        ${(i+1)%7===0?`<div class="bar-n">${i+1}</div>`:""}
-      </div>`;
-    }).join("");
-
-    const rows=Array.from({length:days},(_,i)=>{
-      const t=trades[dk(year,month,i+1)];
-      if(!t)return"";
-      const c=t.pnl>=0?"var(--green)":"var(--red)";
-      return `<div class="trade-row" onclick="gotoDay(${i+1})">
-        <div class="trade-d">DÍA ${String(i+1).padStart(2,"0")}</div>
-        <div class="trade-n">${t.note||"—"}</div>
-        <div class="trade-p" style="color:${c}">${usd(t.pnl)}</div>
-      </div>`;
-    }).join("");
-
-    html+=`
-    <div class="stats-wrap">
-      <div class="mnav" style="padding-top:10px">
-        <button class="mnav-btn" onclick="prevM()">‹</button>
-        <div class="mnav-center">
-          <div class="mnav-month">${MES[month]}</div>
-          <div class="mnav-year">${year}</div>
-        </div>
-        <button class="mnav-btn" onclick="nextM()">›</button>
-      </div>
-      <div class="stats-section">Resumen del mes</div>
-      <div class="stats-grid">
-        ${sCard("💰","P&L Total",usd(st.pnl),st.pnl>=0?"var(--green)":"var(--red)")}
-        ${sCard("🎯","Win Rate",st.wr+"%","#FBBF24")}
-        ${sCard("📋","Trades",st.arr.length,"#818CF8")}
-        ${sCard("🚀","Mejor",usd(st.best),"var(--green)")}
-        ${sCard("📉","Peor",usd(st.worst),"var(--red)")}
-        ${sCard("〜","Promedio",st.arr.length?usd(st.pnl/st.arr.length):"$0","var(--muted)")}
-      </div>
-      ${st.arr.length?`
-      <div class="chart-box">
-        <div class="chart-lbl">Distribución diaria</div>
-        <div class="bars">${bars}</div>
-      </div>`:""}
-      <div class="stats-section" style="margin-top:4px">Operativas</div>
-      <div class="trade-list">
-        ${rows||`<div class="empty-list">SIN OPERATIVAS ESTE MES</div>`}
-      </div>
-    </div>`;
-  }
+  if(view==="cal")   html+=viewCal();
+  if(view==="stats") html+=viewStats();
+  if(view==="set")   html+=viewSettings();
 
   html+=`</div>`; // close scroll
-
-  // Modal
-  if(modal){
-    const existing=trades[modal.key];
-    const dname=DIAS[new Date(year,month,modal.day).getDay()];
-    html+=`
-    <div class="overlay" onclick="closeModal()">
-      <div class="modal" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        <div class="modal-top">
-          <div class="modal-title">${dname} ${modal.day} · ${MES[month]}</div>
-          <button class="modal-close" onclick="closeModal()">✕</button>
-        </div>
-        <div class="type-row">
-          <button class="type-btn ${form.type==="win"?"win-on":""}" onclick="setType('win')">🟢 GANANCIA</button>
-          <button class="type-btn ${form.type==="loss"?"loss-on":""}" onclick="setType('loss')">🔴 PÉRDIDA</button>
-        </div>
-        <div class="field">
-          <span class="field-lbl">Monto USD</span>
-          <div class="field-wrap">
-            <span class="field-pre">$</span>
-            <input class="field-inp" id="pnl-inp" type="number" inputmode="decimal" placeholder="0.00"
-              value="${form.pnl}" oninput="S.form.pnl=this.value" autocomplete="off"/>
-          </div>
-        </div>
-        <div class="field">
-          <span class="field-lbl">Notas (opcional)</span>
-          <textarea class="field-txt" id="note-inp" rows="3"
-            placeholder="Setup, confluencias, lecciones..." 
-            oninput="S.form.note=this.value">${form.note}</textarea>
-        </div>
-        <div class="modal-actions">
-          ${existing?`<button class="btn-del" onclick="delDay()">🗑 Borrar</button>`:""}
-          <button class="btn-save" onclick="saveDay()">✓ GUARDAR</button>
-        </div>
-      </div>
-    </div>`;
-  }
+  if(modal) html+=viewModal();
 
   document.getElementById("root").innerHTML=html;
-  if(modal) setTimeout(()=>document.getElementById("pnl-inp")?.focus(),100);
+  if(modal) setTimeout(()=>document.getElementById("pnl-inp")?.focus(),120);
+}
+
+// ── Vista Calendario ────────────────────────────────────────────────────────
+function viewCal(){
+  const {year,month}=S;
+  const st=monthStats();
+  const pnlColor=st.pnl>=0?"var(--green)":"var(--red)";
+  const days=dim(year,month), first=fd(year,month);
+  let html=`
+  <div class="mnav">
+    <button class="mnav-btn" onclick="prevM()">‹</button>
+    <div class="mnav-center"><div class="mnav-month">${MES[month]}</div><div class="mnav-year">${year}</div></div>
+    <button class="mnav-btn" onclick="nextM()">›</button>
+  </div>
+  <div class="strip">
+    <div class="strip-item"><div class="strip-val" style="color:${pnlColor}">${usd(st.pnl)}</div><div class="strip-lbl">P&L Mes</div></div>
+    <div class="strip-item"><div class="strip-val" style="color:var(--green)">${st.wins}</div><div class="strip-lbl">Wins</div></div>
+    <div class="strip-item"><div class="strip-val" style="color:var(--red)">${st.loss}</div><div class="strip-lbl">Losses</div></div>
+    <div class="strip-item"><div class="strip-val" style="color:#FBBF24">${st.wr}%</div><div class="strip-lbl">Win Rate</div></div>
+  </div>
+  <div class="cal-head">${DIAS.map(d=>`<div class="cal-dh">${d}</div>`).join("")}</div>
+  <div class="cal-grid">`;
+  for(let i=0;i<first;i++) html+=`<div class="day-cell empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const items=dayItems(year,month,d);
+    const pnl=dayPnl(year,month,d);
+    const isW=items.length&&pnl>0, isL=items.length&&pnl<0, isBE=items.length&&pnl===0;
+    const isTod=d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
+    let cls="day-cell";
+    if(isTod) cls+=" today"; else if(isW) cls+=" win"; else if(isL) cls+=" loss"; else if(isBE) cls+=" be";
+    html+=`<div class="${cls}" onclick="openModal(${d})">
+      ${items.length>1?`<div class="day-badge">${items.length}</div>`:""}
+      <div class="day-num">${d}</div>
+      ${items.length?`<div class="day-pnl" style="color:${isW?"var(--green)":isL?"var(--red)":"var(--muted)"}">${compact(pnl)}</div>`:`<div class="day-add">+</div>`}
+    </div>`;
+  }
+  html+=`</div><div style="height:16px"></div>`;
+  return html;
+}
+
+// ── Vista Estadísticas ──────────────────────────────────────────────────────
+function viewStats(){
+  const {year,month}=S;
+  const st=monthStats();
+  const days=dim(year,month);
+  const pfTxt = st.pf===Infinity?"∞":st.pf.toFixed(2);
+
+  // barras diarias
+  const maxA=st.flat.length?Math.max(...Array.from({length:days},(_,i)=>Math.abs(dayPnl(year,month,i+1))),1):1;
+  const bars=Array.from({length:days},(_,i)=>{
+    const p=dayPnl(year,month,i+1); const has=dayItems(year,month,i+1).length;
+    const h=has?Math.max(4,Math.abs(p)/maxA*56):0;
+    const bg=!has?"transparent":p>0?"var(--green)":p<0?"var(--red)":"var(--slate)";
+    return `<div class="bar-w"><div class="bar" style="height:${h}px;background:${bg};opacity:${h?1:.15}"></div>${(i+1)%7===0?`<div class="bar-n">${i+1}</div>`:""}</div>`;
+  }).join("");
+
+  // curva de equity (SVG)
+  const eq=equitySVG(st.curve);
+
+  // meta mensual
+  let goalHtml="";
+  if(S.cfg.goal>0){
+    const pct=Math.max(0,Math.min(100,st.pnl/S.cfg.goal*100));
+    const col=st.pnl>=S.cfg.goal?"var(--green)":st.pnl>=0?"var(--gold)":"var(--red)";
+    goalHtml=`<div class="goal-box">
+      <div class="goal-top"><span class="goal-t">🎯 Meta del mes</span><span class="goal-v" style="color:${col}">${usd(st.pnl)} / $${S.cfg.goal.toLocaleString("en-US")}</span></div>
+      <div class="goal-track"><div class="goal-fill" style="width:${pct}%;background:${col}"></div></div>
+    </div>`;
+  }
+  // alerta drawdown
+  let warnHtml="";
+  if(S.cfg.maxLoss>0 && st.pnl<=-S.cfg.maxLoss)
+    warnHtml=`<div class="warn">⚠️ El P&L del mes (${usd(st.pnl)}) alcanzó tu pérdida máxima de $${S.cfg.maxLoss.toLocaleString("en-US")}.</div>`;
+
+  // sesiones
+  const sessRow=(name,tag,d)=>{
+    const wr=d.n?Math.round(d.w/d.n*100):0;
+    return `<div class="sess-row">
+      <div class="sess-name">${tag} ${name}</div>
+      <div class="sess-metric"><div class="sess-mv" style="color:var(--text)">${d.n}</div><div class="sess-ml">Trades</div></div>
+      <div class="sess-metric"><div class="sess-mv" style="color:#FBBF24">${wr}%</div><div class="sess-ml">WR</div></div>
+      <div class="sess-metric"><div class="sess-mv" style="color:${d.pnl>=0?"var(--green)":"var(--red)"}">${compact(d.pnl||0)}</div><div class="sess-ml">P&L</div></div>
+    </div>`;
+  };
+
+  const rows=Array.from({length:days},(_,i)=>{
+    const items=dayItems(year,month,i+1); if(!items.length)return"";
+    const p=dayPnl(year,month,i+1);
+    const c=p>=0?"var(--green)":"var(--red)";
+    const note=items.map(t=>t.note).filter(Boolean).join(" · ")||`${items.length} operativa${items.length>1?"s":""}`;
+    return `<div class="trade-row" onclick="gotoDay(${i+1})">
+      <div class="trade-d">DÍA ${String(i+1).padStart(2,"0")}</div>
+      <div class="trade-n">${esc(note)}</div>
+      <div class="trade-p" style="color:${c}">${usd(p)}</div>
+    </div>`;
+  }).join("");
+
+  return `<div class="stats-wrap">
+    <div class="mnav" style="padding-top:10px">
+      <button class="mnav-btn" onclick="prevM()">‹</button>
+      <div class="mnav-center"><div class="mnav-month">${MES[month]}</div><div class="mnav-year">${year}</div></div>
+      <button class="mnav-btn" onclick="nextM()">›</button>
+    </div>
+    ${goalHtml}${warnHtml}
+    <div class="stats-section">Resumen del mes</div>
+    <div class="stats-grid">
+      ${sCard("💰","P&L Total",usd(st.pnl),st.pnl>=0?"var(--green)":"var(--red)")}
+      ${sCard("🎯","Win Rate",st.wr+"%","#FBBF24")}
+      ${sCard("📋","Trades",st.trades,"#818CF8")}
+      ${sCard("🚀","Mejor",compact(st.best||0),"var(--green)")}
+      ${sCard("📉","Peor",compact(st.worst||0),"var(--red)")}
+      ${sCard("〜","Promedio",compact(st.avg||0),"var(--muted)")}
+    </div>
+    <div class="stats-section">Rendimiento</div>
+    <div class="stats-grid">
+      ${sCard("⚖️","Profit Factor",pfTxt,st.pf>=1?"var(--green)":"var(--red)")}
+      ${sCard("📊","Expectativa",compact(st.avg||0),st.avg>=0?"var(--green)":"var(--red)")}
+      ${sCard("📉","Drawdown",st.maxDD?"-$"+st.maxDD.toFixed(0):"$0","var(--red)")}
+      ${sCard("🔥","Racha Win",st.maxW,"var(--green)")}
+      ${sCard("🧊","Racha Loss",st.maxL,"var(--red)")}
+      ${sCard("Ⓡ","R Promedio",st.hasR?(st.avgR>=0?"+":"")+st.avgR.toFixed(2)+"R":"—",st.avgR>=0?"var(--green)":"var(--red)")}
+    </div>
+    ${st.flat.length?`<div class="stats-section">Curva de equity (mes)</div><div class="chart-box">${eq}</div>`:""}
+    ${st.flat.length?`<div class="stats-section">Distribución diaria</div><div class="chart-box"><div class="bars">${bars}</div></div>`:""}
+    ${st.adherence!==null?`<div class="stats-section">Adherencia al plan</div>
+      <div class="goal-box"><div class="goal-top"><span class="goal-t">✅ Operativas siguiendo el plan</span><span class="goal-v" style="color:${st.adherence>=80?"var(--green)":st.adherence>=50?"var(--gold)":"var(--red)"}">${st.adherence}%</span></div>
+      <div class="goal-track"><div class="goal-fill" style="width:${st.adherence}%;background:${st.adherence>=80?"var(--green)":st.adherence>=50?"var(--gold)":"var(--red)"}"></div></div></div>`:""}
+    ${st.flat.length?`<div class="stats-section">Por sesión</div><div class="sess-tbl">
+      ${sessRow("Londres","🇬🇧",st.bySess.LON)}
+      ${sessRow("New York","🇺🇸",st.bySess.NY)}
+      ${st.bySess.none.n?sessRow("Sin sesión","•",st.bySess.none):""}
+    </div>`:""}
+    <div class="stats-section">Operativas del mes</div>
+    <div class="trade-list">${rows||`<div class="empty-list">SIN OPERATIVAS ESTE MES</div>`}</div>
+    <div style="height:12px"></div>
+  </div>`;
+}
+
+function equitySVG(curve){
+  const w=420,h=120,pad=6;
+  const min=Math.min(...curve), max=Math.max(...curve);
+  const range=(max-min)||1;
+  const n=curve.length;
+  const x=i=> n>1 ? pad+(i/(n-1))*(w-2*pad) : w/2;
+  const y=v=> h-pad-((v-min)/range)*(h-2*pad);
+  const zeroY=y(0);
+  let d="";
+  curve.forEach((v,i)=>{ const px=x(i).toFixed(1), py=y(v).toFixed(1); d+=(i?" L":"M")+px+" "+py; });
+  const area = d + ` L ${x(n-1).toFixed(1)} ${h-pad} L ${x(0).toFixed(1)} ${h-pad} Z`;
+  const end=curve[curve.length-1];
+  const col=end>=0?"#22C55E":"#EF4444";
+  return `<svg class="eq-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <line x1="0" y1="${zeroY.toFixed(1)}" x2="${w}" y2="${zeroY.toFixed(1)}" stroke="#1F2D42" stroke-width="1" stroke-dasharray="3 3"/>
+    <path d="${area}" fill="${col}" opacity="0.12"/>
+    <path d="${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+// ── Vista Ajustes ───────────────────────────────────────────────────────────
+function viewSettings(){
+  const c=S.cfg;
+  const nTrades=Object.values(S.trades).reduce((s,t)=>s+(t.items?t.items.length:0),0);
+  const nDays=Object.keys(S.trades).length;
+  return `<div class="set-wrap">
+    <div class="set-card">
+      <h3>🎯 Metas y límites</h3>
+      <p>Se usan en Estadísticas para mostrar tu progreso mensual y avisarte si superas tu pérdida máxima.</p>
+      <div class="set-field"><span class="set-lbl">Meta de ganancia mensual ($)</span><input class="set-inp" type="number" inputmode="decimal" value="${c.goal||""}" placeholder="0" oninput="S.cfg.goal=parseFloat(this.value)||0"/></div>
+      <div class="set-field"><span class="set-lbl">Pérdida máxima mensual ($)</span><input class="set-inp" type="number" inputmode="decimal" value="${c.maxLoss||""}" placeholder="0" oninput="S.cfg.maxLoss=parseFloat(this.value)||0"/></div>
+      <div class="set-field"><span class="set-lbl">Tamaño de la cuenta ($)</span><input class="set-inp" type="number" inputmode="decimal" value="${c.account||""}" placeholder="0" oninput="S.cfg.account=parseFloat(this.value)||0"/></div>
+      <button class="set-btn gold" onclick="saveCfg();toast('Ajustes guardados')">💾 Guardar ajustes</button>
+    </div>
+
+    <div class="set-card">
+      <h3>💾 Copia de seguridad</h3>
+      <p>Tus datos se guardan solo en este dispositivo. Exporta con frecuencia: si cambias de teléfono o borras el navegador, perderías el historial. Guarda el archivo en tu nube (Drive, iCloud…).</p>
+      <div class="set-btn-row" style="margin-bottom:8px">
+        <button class="set-btn" onclick="exportJSON()">⬇️ Exportar JSON</button>
+        <button class="set-btn" onclick="exportCSV()">⬇️ Exportar CSV</button>
+      </div>
+      <button class="set-btn gold" onclick="document.getElementById('import-file').click()">⬆️ Importar respaldo (JSON)</button>
+    </div>
+
+    <div class="set-card">
+      <h3>⚠️ Zona de riesgo</h3>
+      <p>Borra TODO el historial de este dispositivo. Esta acción no se puede deshacer. Exporta un respaldo antes.</p>
+      <button class="set-btn danger" onclick="wipeAll()">🗑 Borrar todo el historial</button>
+    </div>
+
+    <div class="set-info">${nTrades} operativas · ${nDays} días registrados<br/>XAUUSD Journal v2</div>
+    <div style="height:12px"></div>
+  </div>`;
 }
 
 function sCard(icon,lbl,val,color){
-  return `<div class="stat-card">
-    <div class="stat-icon">${icon}</div>
-    <div class="stat-val" style="color:${color}">${val}</div>
-    <div class="stat-lbl">${lbl}</div>
+  return `<div class="stat-card"><div class="stat-icon">${icon}</div><div class="stat-val" style="color:${color}">${val}</div><div class="stat-lbl">${lbl}</div></div>`;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+// ── Modal (varias operativas por día) ───────────────────────────────────────
+function viewModal(){
+  const {year,month,modal,form,editIdx}=S;
+  const items=(S.trades[modal.key]&&S.trades[modal.key].items)||[];
+  const dname=DIASL[new Date(year,month,modal.day).getDay()];
+
+  const list=items.map((t,idx)=>{
+    const tag = t.session==="LON"?`<span class="mday-tag tag-lon">LON</span>`
+             : t.session==="NY"?`<span class="mday-tag tag-ny">NY</span>`
+             : `<span class="mday-tag tag-none">—</span>`;
+    const dir = t.dir==="buy"?"▲ Compra":t.dir==="sell"?"▼ Venta":"";
+    const rtxt = (typeof t.r==="number")?` · ${t.r>=0?"+":""}${t.r}R`:"";
+    return `<div class="mday-item ${editIdx===idx?"sel":""}" onclick="editItem(${idx})">
+      ${tag}
+      <div class="mday-dir">${dir}${esc(t.note?" · "+t.note:"")}${rtxt}</div>
+      <div class="mday-p" style="color:${t.pnl>=0?"var(--green)":"var(--red)"}">${usd(t.pnl)}</div>
+      <button class="mday-del" onclick="event.stopPropagation();delItem(${idx})">🗑</button>
+    </div>`;
+  }).join("");
+
+  return `<div class="overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-top">
+        <div class="modal-title">${dname} ${modal.day} · ${MES[month]}</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      ${items.length?`<div class="mday-list">${list}</div>`:""}
+      <div class="form-title">${editIdx!==null?"✏️ Editar operativa":"➕ Nueva operativa"}</div>
+      <div class="type-row">
+        <button class="type-btn ${form.type==="win"?"win-on":""}" onclick="setType('win')">🟢 GANANCIA</button>
+        <button class="type-btn ${form.type==="loss"?"loss-on":""}" onclick="setType('loss')">🔴 PÉRDIDA</button>
+      </div>
+      <div class="field-row">
+        <div class="field"><span class="field-lbl">Monto USD</span>
+          <div class="field-wrap"><span class="field-pre">$</span>
+          <input class="field-inp" id="pnl-inp" type="number" inputmode="decimal" placeholder="0.00" value="${form.pnl}" oninput="S.form.pnl=this.value" autocomplete="off"/></div>
+        </div>
+        <div class="field"><span class="field-lbl">Resultado R</span>
+          <div class="field-wrap"><span class="field-pre">R</span>
+          <input class="field-inp" type="number" inputmode="decimal" placeholder="0.0" value="${form.r}" oninput="S.form.r=this.value" autocomplete="off"/></div>
+        </div>
+      </div>
+      <div class="field"><span class="field-lbl">Dirección</span>
+        <div class="seg">
+          <button class="seg-btn ${form.dir==="buy"?"on":""}" onclick="setF('dir','buy')">▲ Compra</button>
+          <button class="seg-btn ${form.dir==="sell"?"on":""}" onclick="setF('dir','sell')">▼ Venta</button>
+        </div>
+      </div>
+      <div class="field"><span class="field-lbl">Sesión</span>
+        <div class="seg">
+          <button class="seg-btn ${form.session==="LON"?"on":""}" onclick="setF('session','LON')">🇬🇧 Londres</button>
+          <button class="seg-btn ${form.session==="NY"?"on":""}" onclick="setF('session','NY')">🇺🇸 New York</button>
+        </div>
+      </div>
+      <div class="chk-row" onclick="S.form.followed=!S.form.followed;render()">
+        <div class="chk-box ${form.followed?"on":""}">${form.followed?"✓":""}</div>
+        <div class="chk-lbl">Seguí mi plan de trading</div>
+      </div>
+      <div class="field"><span class="field-lbl">Notas (opcional)</span>
+        <textarea class="field-txt" rows="2" placeholder="Setup, confluencias, lecciones..." oninput="S.form.note=this.value">${esc(form.note)}</textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-save" onclick="saveItem()">${editIdx!==null?"✓ ACTUALIZAR":"✓ AGREGAR OPERATIVA"}</button>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -397,28 +627,106 @@ function sCard(icon,lbl,val,color){
 function setView(v){S.view=v;render()}
 function prevM(){S.month===0?(S.year--,S.month=11):S.month--;render()}
 function nextM(){S.month===11?(S.year++,S.month=0):S.month++;render()}
-function openModal(d){
-  const key=dk(S.year,S.month,d);
-  const ex=S.trades[key];
-  S.form=ex?{pnl:String(Math.abs(ex.pnl)),note:ex.note||"",type:ex.pnl>=0?"win":"loss"}
-           :{pnl:"",note:"",type:"win"};
-  S.modal={day:d,key};render();
-}
-function closeModal(){S.modal=null;render()}
+function resetForm(){S.form={pnl:"",note:"",type:"win",dir:"",session:"",r:"",followed:true};S.editIdx=null;}
+function openModal(d){ resetForm(); S.modal={day:d,key:dk(S.year,S.month,d)}; render(); }
+function closeModal(){S.modal=null;S.editIdx=null;render()}
 function setType(t){S.form.type=t;render()}
-function saveDay(){
-  const p=parseFloat(S.form.pnl);
-  if(!p||isNaN(p)){alert("Ingresa un monto válido");return}
-  const pnl=S.form.type==="loss"?-Math.abs(p):Math.abs(p);
-  S.trades[S.modal.key]={pnl,note:S.form.note,date:S.modal.key};
-  save();S.modal=null;render();
+function setF(k,v){S.form[k]=S.form[k]===v?"":v;render()}
+function editItem(idx){
+  const day=S.trades[S.modal.key];
+  const it=day&&day.items?day.items[idx]:null; if(!it)return;
+  S.form={pnl:String(Math.abs(it.pnl)),note:it.note||"",type:it.pnl>=0?"win":"loss",
+    dir:it.dir||"",session:it.session||"",r:(typeof it.r==="number")?String(Math.abs(it.r)):"",
+    followed:it.followed!==false};
+  S.editIdx=idx; render();
 }
-function delDay(){
+function saveItem(){
+  const p=parseFloat(S.form.pnl);
+  if(!p||isNaN(p)){toast("Ingresa un monto válido");return}
+  const sign=S.form.type==="loss"?-1:1;
+  const pnl=sign*Math.abs(p);
+  let r=parseFloat(S.form.r); r=isNaN(r)?null:sign*Math.abs(r);
+  const item={ id:S.editIdx!==null?(S.trades[S.modal.key].items[S.editIdx].id):uid(),
+    pnl, r, dir:S.form.dir||null, session:S.form.session||null, followed:!!S.form.followed, note:S.form.note.trim() };
+  if(!S.trades[S.modal.key]) S.trades[S.modal.key]={date:S.modal.key,items:[]};
+  if(S.editIdx!==null) S.trades[S.modal.key].items[S.editIdx]=item;
+  else S.trades[S.modal.key].items.push(item);
+  save(); resetForm(); render();
+  toast("Operativa guardada");
+}
+function delItem(idx){
   if(!confirm("¿Eliminar esta operativa?"))return;
-  delete S.trades[S.modal.key];
-  save();S.modal=null;render();
+  const day=S.trades[S.modal.key]; if(!day)return;
+  day.items.splice(idx,1);
+  if(!day.items.length) delete S.trades[S.modal.key];
+  save(); if(S.editIdx===idx)resetForm(); render();
 }
 function gotoDay(d){S.view="cal";render();setTimeout(()=>openModal(d),80)}
+
+// ── Backup ──────────────────────────────────────────────────────────────────
+function download(name,text,mime){
+  const blob=new Blob([text],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function exportJSON(){
+  const data={ app:"xauusd-journal", version:2, exported:new Date().toISOString(), cfg:S.cfg, trades:S.trades };
+  download(`xauusd-journal-${dk(S.year,S.month,new Date().getDate())}.json`, JSON.stringify(data,null,2), "application/json");
+  toast("Respaldo JSON descargado");
+}
+function exportCSV(){
+  const rows=[["fecha","sesion","direccion","resultado","pnl_usd","R","siguio_plan","nota"]];
+  Object.keys(S.trades).sort().forEach(k=>{
+    ((S.trades[k]&&S.trades[k].items)||[]).forEach(t=>{
+      rows.push([k, t.session||"", t.dir==="buy"?"Compra":t.dir==="sell"?"Venta":"",
+        t.pnl>=0?"Ganancia":"Perdida", t.pnl.toFixed(2), (typeof t.r==="number"?t.r:""),
+        t.followed===true?"Si":t.followed===false?"No":"", (t.note||"").replace(/"/g,'""')]);
+    });
+  });
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
+  download(`xauusd-journal-${dk(S.year,S.month,new Date().getDate())}.csv`, "﻿"+csv, "text/csv");
+  toast("Respaldo CSV descargado");
+}
+function onImportFile(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      const incoming = data.trades || data;   // acepta export nuevo o dump antiguo
+      if(typeof incoming!=="object") throw 0;
+      if(!confirm("Esto reemplazará tus datos actuales por los del respaldo. ¿Continuar?")) { e.target.value=""; return; }
+      S.trades=migrate(incoming);
+      if(data.cfg) S.cfg=Object.assign({goal:0,maxLoss:0,account:0},data.cfg);
+      save(); saveCfg(); render(); toast("Respaldo importado ✓");
+    }catch(err){ alert("Archivo inválido. Debe ser un JSON exportado por esta app."); }
+    e.target.value="";
+  };
+  reader.readAsText(file);
+}
+function wipeAll(){
+  if(!confirm("¿Borrar TODO el historial de este dispositivo? No se puede deshacer."))return;
+  if(!confirm("Confirma de nuevo: se eliminarán todas tus operativas."))return;
+  S.trades={}; save(); render(); toast("Historial borrado");
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+let toastT;
+function toast(msg){
+  let el=document.getElementById("toast");
+  if(!el){ el=document.createElement("div"); el.id="toast";
+    el.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111827;border:1px solid #1F2D42;color:#E2E8F0;padding:10px 18px;border-radius:12px;font-size:13px;font-family:'Syne',sans-serif;z-index:300;box-shadow:0 6px 24px rgba(0,0,0,.5);transition:opacity .3s;max-width:90%;text-align:center";
+    document.body.appendChild(el); }
+  el.textContent=msg; el.style.opacity="1";
+  clearTimeout(toastT); toastT=setTimeout(()=>el.style.opacity="0",1800);
+}
+
+// ── Service worker (offline) ────────────────────────────────────────────────
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
 
 render();
 </script>
