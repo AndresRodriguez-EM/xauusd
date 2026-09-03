@@ -38,6 +38,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .hdr-total{text-align:right}
 .hdr-total-lbl{font-size:9px;letter-spacing:2px;color:var(--slate);font-family:'JetBrains Mono',monospace}
 .hdr-total-val{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;transition:color .3s}
+.hdr-total-sub{font-size:9px;color:var(--slate);font-family:'JetBrains Mono',monospace;margin-top:1px}
 
 /* ── TABS ── */
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
@@ -332,8 +333,10 @@ const allPnL = () => Object.values(S.trades).reduce((s,t)=>s+(t.items?t.items.re
 // ── Render ────────────────────────────────────────────────────────────────
 function render(){
   const {year,month,view,modal}=S;
-  const apnl=allPnL();
-  const apnlColor=apnl>=0?"var(--green)":"var(--red)";
+  const gen=allPnL();        // P&L generado operando
+  const wdAll=totalWd();     // total retirado de la cuenta
+  const net=gen-wdAll;       // neto = generado - retirado
+  const netColor=net>=0?"var(--green)":"var(--red)";
 
   let html=`
   <div class="hdr">
@@ -345,8 +348,9 @@ function render(){
       </div>
     </div>
     <div class="hdr-total">
-      <div class="hdr-total-lbl">TOTAL ACUMULADO</div>
-      <div class="hdr-total-val" style="color:${apnlColor}">${usd(apnl)}</div>
+      <div class="hdr-total-lbl">NETO ACUMULADO</div>
+      <div class="hdr-total-val" style="color:${netColor}">${usd(net)}</div>
+      ${wdAll>0?`<div class="hdr-total-sub">Gen ${usd(gen)} · Ret -$${wdAll.toLocaleString("en-US")}</div>`:""}
     </div>
   </div>
   <div class="tabs">
