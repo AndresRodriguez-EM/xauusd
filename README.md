@@ -11,8 +11,10 @@ Funciona en el celular y sin conexión. Los datos se guardan en tu dispositivo.
 - **Estadísticas del mes:** P&L, win rate, profit factor, expectativa, drawdown,
   rachas, R promedio, adherencia al plan y desempeño **por sesión**.
 - **Curva de equity** y distribución diaria.
+- **Retiros de la cuenta:** registra los payouts/retiros por día (aparte de las
+  operativas, sin afectar el win rate) con total del mes y total acumulado retirado.
 - **Metas y límites:** meta mensual con barra de progreso y aviso de pérdida máxima.
-- **Copia de seguridad:** exportar/importar **JSON** y exportar **CSV**.
+- **Copia de seguridad:** exportar/importar **JSON** (incluye retiros) y exportar **CSV**.
 - **Offline:** service worker que cachea la app para usarla sin internet.
 
 ## Importante sobre tus datos

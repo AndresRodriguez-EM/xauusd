@@ -84,6 +84,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .day-add{font-size:15px;color:var(--border);margin-top:-1px}
 .day-cell.today .day-num{color:var(--gold)}
 .day-badge{position:absolute;top:2px;right:3px;font-size:7px;font-weight:700;color:var(--gold);font-family:'JetBrains Mono',monospace;background:rgba(245,166,35,.15);border-radius:6px;padding:0 3px}
+.day-wd{position:absolute;top:1px;left:3px;font-size:8px;line-height:1}
 
 /* ── STATS VIEW ── */
 .stats-wrap{padding:14px}
@@ -176,6 +177,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 }
 .type-btn.win-on{background:#052E16;border-color:#166534;color:var(--green)}
 .type-btn.loss-on{background:var(--red-dim);border-color:#7F1D1D;color:var(--red)}
+.mode-row{display:flex;gap:8px;margin-bottom:12px}
+.mode-btn{flex:1;padding:10px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--slate);font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s}
+.mode-btn.on{background:var(--surface);border-color:var(--gold);color:var(--gold)}
 .field{margin-bottom:12px}
 .field-row{display:flex;gap:8px}
 .field-row .field{flex:1}
@@ -220,6 +224,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 // ── Storage keys ───────────────────────────────────────────────────────────
 const SK  = "xauusd26";       // datos de operativas (se conserva para no perder tu historial)
 const CFG = "xauusd_cfg";     // configuración (meta, límites, cuenta)
+const WD  = "xauusd_wd";      // retiros de la cuenta de fondeo
 
 // ── Migración: modelo antiguo (1 operativa/día) -> nuevo (varias/día) ───────
 // Antiguo: trades[fecha] = {pnl, note, date}
@@ -242,12 +247,14 @@ function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(
 const today = new Date();
 let S = {
   year: today.getFullYear(), month: today.getMonth(),
-  view: "cal", modal: null, editIdx: null,
-  form: { pnl:"", note:"", type:"win", dir:"", session:"", r:"", followed:true },
+  view: "cal", modal: null, editIdx: null, editWdIdx: null,
+  form: { pnl:"", note:"", type:"win", dir:"", session:"", r:"", followed:true, mode:"trade" },
   trades: (()=>{ try{ return migrate(JSON.parse(localStorage.getItem(SK)||"{}")) }catch{ return {} } })(),
+  wd: (()=>{ try{ return JSON.parse(localStorage.getItem(WD)||"{}") }catch{ return {} } })(),
   cfg: (()=>{ try{ return Object.assign({goal:0,maxLoss:0,account:0}, JSON.parse(localStorage.getItem(CFG)||"{}")) }catch{ return {goal:0,maxLoss:0,account:0} } })()
 };
 const save    = () => localStorage.setItem(SK, JSON.stringify(S.trades));
+const saveWd  = () => localStorage.setItem(WD, JSON.stringify(S.wd));
 const saveCfg = () => localStorage.setItem(CFG, JSON.stringify(S.cfg));
 
 // ── Constants ─────────────────────────────────────────────────────────────
@@ -271,6 +278,9 @@ const compact = n => {
 };
 const dayItems = (y,m,d) => { const t=S.trades[dk(y,m,d)]; return t&&t.items?t.items:[]; };
 const dayPnl   = (y,m,d) => dayItems(y,m,d).reduce((s,i)=>s+i.pnl,0);
+const dayWd    = (y,m,d) => { const a=S.wd[dk(y,m,d)]; return a&&a.length?a:[]; };
+const monthWd  = () => { const {year,month}=S; let s=0; const days=dim(year,month); for(let d=1;d<=days;d++) s+=dayWd(year,month,d).reduce((a,w)=>a+w.amount,0); return s; };
+const totalWd  = () => Object.values(S.wd).reduce((s,a)=>s+(Array.isArray(a)?a.reduce((x,w)=>x+w.amount,0):0),0);
 
 // ── Stats del mes ───────────────────────────────────────────────────────────
 function monthStats(){
@@ -380,6 +390,8 @@ function viewCal(){
   for(let i=0;i<first;i++) html+=`<div class="day-cell empty"></div>`;
   for(let d=1;d<=days;d++){
     const items=dayItems(year,month,d);
+    const wds=dayWd(year,month,d);
+    const wdSum=wds.reduce((a,w)=>a+w.amount,0);
     const pnl=dayPnl(year,month,d);
     const isW=items.length&&pnl>0, isL=items.length&&pnl<0, isBE=items.length&&pnl===0;
     const isTod=d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
@@ -387,8 +399,11 @@ function viewCal(){
     if(isTod) cls+=" today"; else if(isW) cls+=" win"; else if(isL) cls+=" loss"; else if(isBE) cls+=" be";
     html+=`<div class="${cls}" onclick="openModal(${d})">
       ${items.length>1?`<div class="day-badge">${items.length}</div>`:""}
+      ${wds.length?`<div class="day-wd">💵</div>`:""}
       <div class="day-num">${d}</div>
-      ${items.length?`<div class="day-pnl" style="color:${isW?"var(--green)":isL?"var(--red)":"var(--muted)"}">${compact(pnl)}</div>`:`<div class="day-add">+</div>`}
+      ${items.length?`<div class="day-pnl" style="color:${isW?"var(--green)":isL?"var(--red)":"var(--muted)"}">${compact(pnl)}</div>`
+        :wds.length?`<div class="day-pnl" style="color:var(--gold)">-$${wdSum>=1000?(wdSum/1000).toFixed(1)+"k":wdSum.toFixed(0)}</div>`
+        :`<div class="day-add">+</div>`}
     </div>`;
   }
   html+=`</div><div style="height:16px"></div>`;
@@ -487,6 +502,24 @@ function viewStats(){
       ${sessRow("New York","🇺🇸",st.bySess.NY)}
       ${st.bySess.none.n?sessRow("Sin sesión","•",st.bySess.none):""}
     </div>`:""}
+    ${(()=>{
+      const wdMonth=monthWd(), wdAll=totalWd();
+      const wdRows=Array.from({length:days},(_,i)=>{
+        const a=dayWd(year,month,i+1); if(!a.length)return"";
+        return a.map(w=>`<div class="trade-row" onclick="gotoDay(${i+1})">
+          <div class="trade-d">DÍA ${String(i+1).padStart(2,"0")}</div>
+          <div class="trade-n">💵 ${esc(w.note||"Retiro")}</div>
+          <div class="trade-p" style="color:var(--gold)">-$${w.amount.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+        </div>`).join("");
+      }).join("");
+      if(!wdMonth && !wdAll) return "";
+      return `<div class="stats-section">Retiros de la cuenta</div>
+        <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
+          ${sCard("💵","Retirado (mes)","$"+wdMonth.toLocaleString("en-US"),"var(--gold)")}
+          ${sCard("🏦","Retirado total","$"+wdAll.toLocaleString("en-US"),"var(--gold)")}
+        </div>
+        ${wdRows?`<div class="trade-list" style="margin-top:8px">${wdRows}</div>`:""}`;
+    })()}
     <div class="stats-section">Operativas del mes</div>
     <div class="trade-list">${rows||`<div class="empty-list">SIN OPERATIVAS ESTE MES</div>`}</div>
     <div style="height:12px"></div>
@@ -556,9 +589,11 @@ function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",
 
 // ── Modal (varias operativas por día) ───────────────────────────────────────
 function viewModal(){
-  const {year,month,modal,form,editIdx}=S;
+  const {year,month,modal,form,editIdx,editWdIdx}=S;
   const items=(S.trades[modal.key]&&S.trades[modal.key].items)||[];
+  const wds=S.wd[modal.key]||[];
   const dname=DIASL[new Date(year,month,modal.day).getDay()];
+  const mode=form.mode;
 
   const list=items.map((t,idx)=>{
     const tag = t.session==="LON"?`<span class="mday-tag tag-lon">LON</span>`
@@ -566,7 +601,7 @@ function viewModal(){
              : `<span class="mday-tag tag-none">—</span>`;
     const dir = t.dir==="buy"?"▲ Compra":t.dir==="sell"?"▼ Venta":"";
     const rtxt = (typeof t.r==="number")?` · ${t.r>=0?"+":""}${t.r}R`:"";
-    return `<div class="mday-item ${editIdx===idx?"sel":""}" onclick="editItem(${idx})">
+    return `<div class="mday-item ${(mode==="trade"&&editIdx===idx)?"sel":""}" onclick="editItem(${idx})">
       ${tag}
       <div class="mday-dir">${dir}${esc(t.note?" · "+t.note:"")}${rtxt}</div>
       <div class="mday-p" style="color:${t.pnl>=0?"var(--green)":"var(--red)"}">${usd(t.pnl)}</div>
@@ -574,15 +609,29 @@ function viewModal(){
     </div>`;
   }).join("");
 
-  return `<div class="overlay" onclick="closeModal()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-handle"></div>
-      <div class="modal-top">
-        <div class="modal-title">${dname} ${modal.day} · ${MES[month]}</div>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+  const wlist=wds.map((w,idx)=>`
+    <div class="mday-item ${(mode==="withdraw"&&editWdIdx===idx)?"sel":""}" onclick="editWd(${idx})">
+      <span class="mday-tag tag-ny">💵 RETIRO</span>
+      <div class="mday-dir">${esc(w.note||"")}</div>
+      <div class="mday-p" style="color:var(--gold)">-$${w.amount.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      <button class="mday-del" onclick="event.stopPropagation();delWd(${idx})">🗑</button>
+    </div>`).join("");
+
+  let formHtml;
+  if(mode==="withdraw"){
+    formHtml=`
+      <div class="field"><span class="field-lbl">Monto del retiro (USD)</span>
+        <div class="field-wrap"><span class="field-pre">$</span>
+        <input class="field-inp" id="pnl-inp" type="number" inputmode="decimal" placeholder="0.00" value="${form.pnl}" oninput="S.form.pnl=this.value" autocomplete="off"/></div>
       </div>
-      ${items.length?`<div class="mday-list">${list}</div>`:""}
-      <div class="form-title">${editIdx!==null?"✏️ Editar operativa":"➕ Nueva operativa"}</div>
+      <div class="field"><span class="field-lbl">Notas (opcional)</span>
+        <textarea class="field-txt" rows="2" placeholder="Ej: payout mensual, retiro a Wise..." oninput="S.form.note=this.value">${esc(form.note)}</textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-save" onclick="saveWdItem()">${editWdIdx!==null?"✓ ACTUALIZAR RETIRO":"💵 REGISTRAR RETIRO"}</button>
+      </div>`;
+  } else {
+    formHtml=`
       <div class="type-row">
         <button class="type-btn ${form.type==="win"?"win-on":""}" onclick="setType('win')">🟢 GANANCIA</button>
         <button class="type-btn ${form.type==="loss"?"loss-on":""}" onclick="setType('loss')">🔴 PÉRDIDA</button>
@@ -618,7 +667,28 @@ function viewModal(){
       </div>
       <div class="modal-actions">
         <button class="btn-save" onclick="saveItem()">${editIdx!==null?"✓ ACTUALIZAR":"✓ AGREGAR OPERATIVA"}</button>
+      </div>`;
+  }
+
+  const formTitle = mode==="withdraw"
+    ? (editWdIdx!==null?"✏️ Editar retiro":"💵 Nuevo retiro")
+    : (editIdx!==null?"✏️ Editar operativa":"➕ Nueva operativa");
+
+  return `<div class="overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-top">
+        <div class="modal-title">${dname} ${modal.day} · ${MES[month]}</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
+      ${items.length?`<div class="mday-list">${list}</div>`:""}
+      ${wds.length?`<div class="mday-list">${wlist}</div>`:""}
+      <div class="mode-row">
+        <button class="mode-btn ${mode==="trade"?"on":""}" onclick="setMode('trade')">📈 Operativa</button>
+        <button class="mode-btn ${mode==="withdraw"?"on":""}" onclick="setMode('withdraw')">💵 Retiro</button>
+      </div>
+      <div class="form-title">${formTitle}</div>
+      ${formHtml}
     </div>
   </div>`;
 }
@@ -627,18 +697,19 @@ function viewModal(){
 function setView(v){S.view=v;render()}
 function prevM(){S.month===0?(S.year--,S.month=11):S.month--;render()}
 function nextM(){S.month===11?(S.year++,S.month=0):S.month++;render()}
-function resetForm(){S.form={pnl:"",note:"",type:"win",dir:"",session:"",r:"",followed:true};S.editIdx=null;}
-function openModal(d){ resetForm(); S.modal={day:d,key:dk(S.year,S.month,d)}; render(); }
-function closeModal(){S.modal=null;S.editIdx=null;render()}
+function resetForm(mode){S.form={pnl:"",note:"",type:"win",dir:"",session:"",r:"",followed:true,mode:mode||"trade"};S.editIdx=null;S.editWdIdx=null;}
+function openModal(d){ resetForm("trade"); S.modal={day:d,key:dk(S.year,S.month,d)}; render(); }
+function closeModal(){S.modal=null;S.editIdx=null;S.editWdIdx=null;render()}
 function setType(t){S.form.type=t;render()}
 function setF(k,v){S.form[k]=S.form[k]===v?"":v;render()}
+function setMode(m){resetForm(m);render()}
 function editItem(idx){
   const day=S.trades[S.modal.key];
   const it=day&&day.items?day.items[idx]:null; if(!it)return;
   S.form={pnl:String(Math.abs(it.pnl)),note:it.note||"",type:it.pnl>=0?"win":"loss",
     dir:it.dir||"",session:it.session||"",r:(typeof it.r==="number")?String(Math.abs(it.r)):"",
-    followed:it.followed!==false};
-  S.editIdx=idx; render();
+    followed:it.followed!==false,mode:"trade"};
+  S.editIdx=idx; S.editWdIdx=null; render();
 }
 function saveItem(){
   const p=parseFloat(S.form.pnl);
@@ -651,7 +722,7 @@ function saveItem(){
   if(!S.trades[S.modal.key]) S.trades[S.modal.key]={date:S.modal.key,items:[]};
   if(S.editIdx!==null) S.trades[S.modal.key].items[S.editIdx]=item;
   else S.trades[S.modal.key].items.push(item);
-  save(); resetForm(); render();
+  save(); resetForm("trade"); render();
   toast("Operativa guardada");
 }
 function delItem(idx){
@@ -659,7 +730,30 @@ function delItem(idx){
   const day=S.trades[S.modal.key]; if(!day)return;
   day.items.splice(idx,1);
   if(!day.items.length) delete S.trades[S.modal.key];
-  save(); if(S.editIdx===idx)resetForm(); render();
+  save(); if(S.editIdx===idx)resetForm("trade"); render();
+}
+// ── Retiros ──────────────────────────────────────────────────────────────
+function saveWdItem(){
+  const p=parseFloat(S.form.pnl);
+  if(!p||isNaN(p)||p<=0){toast("Ingresa un monto válido");return}
+  const item={ id:S.editWdIdx!==null?S.wd[S.modal.key][S.editWdIdx].id:uid(), amount:Math.abs(p), note:S.form.note.trim() };
+  if(!S.wd[S.modal.key]) S.wd[S.modal.key]=[];
+  if(S.editWdIdx!==null) S.wd[S.modal.key][S.editWdIdx]=item;
+  else S.wd[S.modal.key].push(item);
+  saveWd(); resetForm("withdraw"); render();
+  toast("Retiro guardado");
+}
+function editWd(idx){
+  const a=S.wd[S.modal.key]; const w=a&&a[idx]; if(!w)return;
+  S.form={pnl:String(w.amount),note:w.note||"",type:"win",dir:"",session:"",r:"",followed:true,mode:"withdraw"};
+  S.editWdIdx=idx; S.editIdx=null; render();
+}
+function delWd(idx){
+  if(!confirm("¿Eliminar este retiro?"))return;
+  const a=S.wd[S.modal.key]; if(!a)return;
+  a.splice(idx,1);
+  if(!a.length) delete S.wd[S.modal.key];
+  saveWd(); if(S.editWdIdx===idx)resetForm("withdraw"); render();
 }
 function gotoDay(d){S.view="cal";render();setTimeout(()=>openModal(d),80)}
 
@@ -672,19 +766,26 @@ function download(name,text,mime){
   setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 function exportJSON(){
-  const data={ app:"xauusd-journal", version:2, exported:new Date().toISOString(), cfg:S.cfg, trades:S.trades };
+  const data={ app:"xauusd-journal", version:3, exported:new Date().toISOString(), cfg:S.cfg, trades:S.trades, withdrawals:S.wd };
   download(`xauusd-journal-${dk(S.year,S.month,new Date().getDate())}.json`, JSON.stringify(data,null,2), "application/json");
   toast("Respaldo JSON descargado");
 }
 function exportCSV(){
-  const rows=[["fecha","sesion","direccion","resultado","pnl_usd","R","siguio_plan","nota"]];
-  Object.keys(S.trades).sort().forEach(k=>{
+  const all=[];
+  Object.keys(S.trades).forEach(k=>{
     ((S.trades[k]&&S.trades[k].items)||[]).forEach(t=>{
-      rows.push([k, t.session||"", t.dir==="buy"?"Compra":t.dir==="sell"?"Venta":"",
+      all.push([k,"Operativa", t.session||"", t.dir==="buy"?"Compra":t.dir==="sell"?"Venta":"",
         t.pnl>=0?"Ganancia":"Perdida", t.pnl.toFixed(2), (typeof t.r==="number"?t.r:""),
         t.followed===true?"Si":t.followed===false?"No":"", (t.note||"").replace(/"/g,'""')]);
     });
   });
+  Object.keys(S.wd).forEach(k=>{
+    (S.wd[k]||[]).forEach(w=>{
+      all.push([k,"Retiro","","","Retiro", (-Math.abs(w.amount)).toFixed(2), "", "", (w.note||"").replace(/"/g,'""')]);
+    });
+  });
+  all.sort((a,b)=> a[0]<b[0]?-1:a[0]>b[0]?1:0);
+  const rows=[["fecha","tipo","sesion","direccion","resultado","monto_usd","R","siguio_plan","nota"], ...all];
   const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
   download(`xauusd-journal-${dk(S.year,S.month,new Date().getDate())}.csv`, "﻿"+csv, "text/csv");
   toast("Respaldo CSV descargado");
@@ -699,8 +800,9 @@ function onImportFile(e){
       if(typeof incoming!=="object") throw 0;
       if(!confirm("Esto reemplazará tus datos actuales por los del respaldo. ¿Continuar?")) { e.target.value=""; return; }
       S.trades=migrate(incoming);
+      if(data.withdrawals) S.wd=data.withdrawals;
       if(data.cfg) S.cfg=Object.assign({goal:0,maxLoss:0,account:0},data.cfg);
-      save(); saveCfg(); render(); toast("Respaldo importado ✓");
+      save(); saveWd(); saveCfg(); render(); toast("Respaldo importado ✓");
     }catch(err){ alert("Archivo inválido. Debe ser un JSON exportado por esta app."); }
     e.target.value="";
   };
@@ -708,8 +810,8 @@ function onImportFile(e){
 }
 function wipeAll(){
   if(!confirm("¿Borrar TODO el historial de este dispositivo? No se puede deshacer."))return;
-  if(!confirm("Confirma de nuevo: se eliminarán todas tus operativas."))return;
-  S.trades={}; save(); render(); toast("Historial borrado");
+  if(!confirm("Confirma de nuevo: se eliminarán todas tus operativas y retiros."))return;
+  S.trades={}; S.wd={}; save(); saveWd(); render(); toast("Historial borrado");
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────
