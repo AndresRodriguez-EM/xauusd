@@ -207,6 +207,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
   line-height:1.5;
 }
 .field-txt::placeholder{color:var(--border)}
+.field-hint{font-size:9px;color:var(--slate);margin-top:5px;line-height:1.45}
 .modal-actions{display:flex;gap:8px;margin-top:4px}
 .btn-save{
   flex:1;padding:14px 0;background:var(--gold);border:none;
@@ -640,15 +641,14 @@ function viewModal(){
         <button class="type-btn ${form.type==="win"?"win-on":""}" onclick="setType('win')">🟢 GANANCIA</button>
         <button class="type-btn ${form.type==="loss"?"loss-on":""}" onclick="setType('loss')">🔴 PÉRDIDA</button>
       </div>
-      <div class="field-row">
-        <div class="field"><span class="field-lbl">Monto USD</span>
-          <div class="field-wrap"><span class="field-pre">$</span>
-          <input class="field-inp" id="pnl-inp" type="number" inputmode="decimal" placeholder="0.00" value="${form.pnl}" oninput="S.form.pnl=this.value" autocomplete="off"/></div>
-        </div>
-        <div class="field"><span class="field-lbl">Resultado R</span>
-          <div class="field-wrap"><span class="field-pre">R</span>
-          <input class="field-inp" type="number" inputmode="decimal" placeholder="0.0" value="${form.r}" oninput="S.form.r=this.value" autocomplete="off"/></div>
-        </div>
+      <div class="field"><span class="field-lbl">Monto USD</span>
+        <div class="field-wrap"><span class="field-pre">$</span>
+        <input class="field-inp" id="pnl-inp" type="number" inputmode="decimal" placeholder="0.00" value="${form.pnl}" oninput="S.form.pnl=this.value" autocomplete="off"/></div>
+      </div>
+      <div class="field"><span class="field-lbl">Resultado R (opcional)</span>
+        <div class="field-wrap"><span class="field-pre">R</span>
+        <input class="field-inp" type="number" inputmode="decimal" placeholder="0.0" value="${form.r}" oninput="S.form.r=this.value" autocomplete="off"/></div>
+        <div class="field-hint">Resultado en múltiplos de tu riesgo. Ej: arriesgas $50 y ganas $100 → 2. Un SL completo = 1. Déjalo vacío si no lo usas.</div>
       </div>
       <div class="field"><span class="field-lbl">Dirección</span>
         <div class="seg">
